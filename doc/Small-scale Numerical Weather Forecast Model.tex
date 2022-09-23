@@ -1,0 +1,89 @@
+\documentclass[12pt, letterpaper, twoside]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{hyphenat}
+\usepackage[english]{babel}
+\useshorthands{~}
+\defineshorthand{~-}{\hyp{}}
+
+\title{Small-scale Numerical Weather Forecast Model}
+\author{Yan Liu \thanks{email:yliu.yb@qq.com}}
+\date{\today}
+
+\begin{document}
+\maketitle
+\newpage
+\section*{config module}
+\&time control
+\newline 
+start date time, 
+end date time, 
+run hours, 
+time interval(unit:seconds)
+\newline
+\&grid control
+\newline
+center\_point\_lon, 
+center\_point\_lat,
+center\_bottom\_height(unit:m), 
+x-direction grid num,
+y-direction grid num,
+z-direction grid num,
+x, y, z interval distance(unit:m)
+
+\section*{input data module}
+\&common data
+\newline
+surface pressure,
+height
+\newline
+\&initial data variable 
+\newline 
+density, 
+temperature, 
+x-component velocity,
+y-component velocity, 
+vertical velocity,
+specific humidity. (3 dimension)
+\newline
+\&force data variable
+\newline 
+density, 
+temperature, 
+x-component velocity,
+y-component velocity, 
+vertical velocity,
+and specific humidity 
+at 
+west, 
+east, 
+south, 
+north, 
+bottom and top boundary, separately.
+\section*{dynamic solver module}
+r\_old = r\_initial
+\newline
+time loop:
+\newline
+begin t
+\newline
+\hspace*{5mm}explicit R-K loop:
+\newline
+\hspace*{5mm}begin R-K
+\newline
+\hspace*{10mm}r*=r\_old-FVM(r\_old, boundary\_t) for R-K1
+\newline
+\hspace*{10mm}r**=r\_old-FVM(r*, boundary\_t) for R-K2
+\newline
+\hspace*{10mm}r\_new=r\_old-FVM(r**, boundary\_t) for R-K3
+\newline
+\hspace*{5mm}end R-k
+\newline
+\hspace*{5mm}output(r\_new)
+\newline
+\hspace*{5mm}r\_old = r\_new
+\newline
+end t
+\section*{Fortran module}
+customType.f90
+
+\end{document}
