@@ -1,9 +1,5 @@
 !------------------------------------------------------------------------------
-<<<<<<< HEAD
 ! Hello Numerical Weather Forecast!
-=======
-! Hello Numerical Weather Forcast!
->>>>>>> 089dd6a187ebc77689dd1514ff2971dfde2772d3
 !------------------------------------------------------------------------------
 !
 ! MODULE: data
@@ -26,10 +22,7 @@
 !------------------------------------------------------------------------------
 
 module data
-<<<<<<< HEAD
     use netcdf
-=======
->>>>>>> 089dd6a187ebc77689dd1514ff2971dfde2772d3
     use customTypes
     implicit none
 
@@ -46,20 +39,12 @@ module data
 
     contains
     subroutine read_time_grid_config()
-<<<<<<< HEAD
-=======
-
->>>>>>> 089dd6a187ebc77689dd1514ff2971dfde2772d3
         open(1, file = '../data/time_grid.config', status = 'old')
         
         read(1,*) time_para%start_date_time
         read(1,*) time_para%end_date_time
         read(1,*) time_para%run_hours
         read(1,*) time_para%t_interval
-<<<<<<< HEAD
-=======
-
->>>>>>> 089dd6a187ebc77689dd1514ff2971dfde2772d3
         read(1,*) grid_para%center_lon
         read(1,*) grid_para%center_lat
         read(1,*) grid_para%x_nums
@@ -70,7 +55,6 @@ module data
         read(1,*) grid_para%z_interval
         
         close(1)
-<<<<<<< HEAD
         
         write(*,*) '*******config info*******'
         write(*,*) 'start_datetime:',time_para%start_date_time
@@ -91,18 +75,12 @@ module data
         integer(KIND=4) :: ncid
         character (len = *), parameter :: FILE_NAME = "../data/simple_xy.nc"
 
-=======
-    end subroutine read_time_grid_config
-    
-    subroutine read_initial_data()
->>>>>>> 089dd6a187ebc77689dd1514ff2971dfde2772d3
         allocate (ini_data%density(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
         allocate (ini_data%theta(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
         allocate (ini_data%u(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
         allocate (ini_data%v(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
         allocate (ini_data%w(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
         allocate (ini_data%q(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
-<<<<<<< HEAD
 
         ! netcdf test
         write (*,*) 'ncid'
@@ -151,9 +129,5 @@ module data
             end function allocate_force_data
 
     end subroutine read_force_data
-=======
-        
-    end subroutine read_initial_data
->>>>>>> 089dd6a187ebc77689dd1514ff2971dfde2772d3
 
 end module data
