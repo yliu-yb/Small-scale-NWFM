@@ -16,6 +16,7 @@
 !------------------------------------------------------------------------------
 module dynamicSolver
     implicit none
+<<<<<<< HEAD
     ! use customTypes
 
     ! type(time_para) :: time_para
@@ -32,6 +33,24 @@ module dynamicSolver
 
     ! ! prognostic_data_old = initial_data
     ! ! prognostic_data_old = prognostic_data_new
+=======
+    use customTypes
+
+    type(time_para) :: time_para
+    type(grid_para) :: grid_para
+    type(initial_data) :: initial_datas
+    type(force_data) :: force_data_bottom
+    type(force_data) :: force_data_top
+    type(force_data) :: force_data_west
+    type(force_data) :: force_data_east
+    type(force_data) :: force_data_south
+    type(force_data) :: force_data_north
+    type(prognostic_data) :: prognostic_data_old
+    type(prognostic_data) :: prognostic_data_new
+
+    ! prognostic_data_old = initial_data
+    ! prognostic_data_old = prognostic_data_new
+>>>>>>> 089dd6a187ebc77689dd1514ff2971dfde2772d3
 
 contains
     function convertHeight2Pressure(arg) result(retval)
