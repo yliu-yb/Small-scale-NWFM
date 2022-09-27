@@ -1,6 +1,6 @@
 {
     "fortran.fortls.disabled": true,
-    "fortran.linter.includePaths": ["/home/yl/wrf/wrfv4.4/Build_WRF/LIBRARIES/netcdf/include"],
+    "fortran.linter.includePaths": ["/home/yl/wrf/wrfv4.4/Build_WRF/LIBRARIES/netcdf/include", "${workspaceFolder}/libs/include"],
     "latex-workshop.latex.tools": [
         {
          "name": "latexmk",

@@ -56,6 +56,11 @@ module customTypes
         real, dimension(:, :, :), allocatable :: q
     end type prognostic_data
 
+    type, public :: auxiliary_data
+        real, dimension(:, :, :), allocatable :: pressure
+        real, dimension(:, :, :), allocatable :: height
+    end type auxiliary_data
+
 contains
     
 end module customTypes
