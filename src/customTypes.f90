@@ -36,6 +36,7 @@ module customTypes
         real, dimension(:, :, :), allocatable :: v ! dimension(x,y,z)
         real, dimension(:, :, :), allocatable :: w ! dimension(x,y,z)
         real, dimension(:, :, :), allocatable :: q ! dimension(x,y,z)
+        real, dimension(:, :, :), allocatable :: pressure ! dimension(x,y,z)
     end type initial_data
 
     type, public :: force_data

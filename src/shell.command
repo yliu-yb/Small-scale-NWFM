@@ -1,0 +1,1 @@
+gfortran -o main main.f90 customTypes.f90 IO.f90 dynamicSolver.f90 data.f90 -I../libs/include -L../libs/lib -ldatetime -I/home/yl/wrf/wrfv4.4/Build_WRF/LIBRARIES/netcdf/include -L/home/yl/wrf/wrfv4.4/Build_WRF/LIBRARIES/netcdf/lib -lnetcdff -lnetcdf

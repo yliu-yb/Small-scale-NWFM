@@ -23,26 +23,30 @@ contains
         use IO
         integer         :: i, t_nums
 
-        call create_nc()
-        t_nums = time_para%run_hours * 3600 / time_para%t_interval
+        ! call create_nc()
+        ! t_nums = time_para%run_hours * 3600 / time_para%t_interval
         
-        do i = 1, t_nums
-            prognostic_data_new%density = i
-            prognostic_data_new%u = i
-            prognostic_data_new%v = i
-            prognostic_data_new%w = i
-            prognostic_data_new%theta = i
-            aux_data%pressure=i
-            aux_data%height=i
-            call write_data2nc(i)
-        end do
+        ! do i = 1, t_nums
+        !     prognostic_data_new%density = i
+        !     prognostic_data_new%u = i
+        !     prognostic_data_new%v = i
+        !     prognostic_data_new%w = i
+        !     prognostic_data_new%theta = i
+        !     aux_data%pressure=i
+        !     aux_data%height=i
+        !     call write_data2nc(i)
+        ! end do
 
-        call close_nc() 
+        ! call close_nc() 
+        
+        call get_initial_from_nc()
+
+
         
     end subroutine IO_test
 
     subroutine run()
-        integer :: t, t_end, t_interval
+        integer :: t, t_end, t_interval, count
         integer :: x, y, z, x_end, y_end, z_end, x_interval, y_interval, z_interval
         real :: coe_t_xdis, coe_t_ydis, coe_t_zdis
         real :: x_tendency, y_tendency, z_tendency
@@ -60,14 +64,16 @@ contains
         ! Gravitational acceleration  
         g = 9.8
 
-        do t = 1, t_end, t_interval
-            ! get force data at time t from file
-             
-            ! Runge-Kutta Scheme
+        ! common coeficients
+        coe_t_xdis = t_interval / (x_interval)
+        coe_t_ydis = t_interval / (y_interval)
+        coe_t_zdis = t_interval / (z_interval)
 
-            coe_t_xdis = t_interval / (x_interval)
-            coe_t_ydis = t_interval / (y_interval)
-            coe_t_zdis = t_interval / (z_interval)
+        count = 0
+        do t = 1, t_end, t_interval
+            count = count + 1
+            ! get force data at time t from file
+            
             
             ! traverse every single point except boundaries
             do z = 2, z_end - 1

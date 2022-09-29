@@ -43,7 +43,7 @@ module data
 
     type(auxiliary_data) :: aux_data
 
-    integer, dimension(:), allocatable :: secondsSinceEpoch_list
+    integer(KIND = 8), dimension(:), allocatable :: secondsSinceEpoch_list
     real, dimension(:), allocatable :: lons
     real, dimension(:), allocatable :: lats
 
@@ -64,6 +64,7 @@ module data
         allocate (ini_data%v(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
         allocate (ini_data%w(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
         allocate (ini_data%q(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
+        allocate (ini_data%pressure(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
 
         ! auxiliary data
         allocate (aux_data%pressure(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
@@ -129,6 +130,7 @@ module data
         read(1,*) time_para%t_interval
         read(1,*) grid_para%center_lon
         read(1,*) grid_para%center_lat
+        read(1,*) grid_para%center_bottom_height
         read(1,*) grid_para%x_nums
         read(1,*) grid_para%y_nums
         read(1,*) grid_para%z_nums
@@ -145,6 +147,7 @@ module data
         write(*,*) 'integral_t(s):',time_para%t_interval
         write(*,*) 'center_lon:',grid_para%center_lon
         write(*,*) 'center_lat:',grid_para%center_lat
+        write(*,*) 'center_bottom_height:',grid_para%center_bottom_height
         write(*,*) 'x-direction_gird_num:',grid_para%x_nums
         write(*,*) 'y-direction_gird_num:',grid_para%y_nums
         write(*,*) 'z-direction_gird_num:',grid_para%z_nums
