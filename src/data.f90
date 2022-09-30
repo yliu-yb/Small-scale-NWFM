@@ -73,12 +73,12 @@ module data
         ! force data
         t_nums = time_para%run_hours * 3600 / time_para%t_interval
         
-        retval = allocate_force_data(force_data_bottom, t_nums, grid_para%y_nums, grid_para%x_nums)
-        retval = allocate_force_data(force_data_top, t_nums, grid_para%y_nums, grid_para%x_nums)
-        retval = allocate_force_data(force_data_west, t_nums, grid_para%z_nums, grid_para%y_nums)
-        retval = allocate_force_data(force_data_east, t_nums, grid_para%z_nums, grid_para%y_nums)
-        retval = allocate_force_data(force_data_south, t_nums, grid_para%z_nums, grid_para%x_nums)
-        retval = allocate_force_data(force_data_north, t_nums, grid_para%z_nums, grid_para%x_nums)
+        retval = allocate_force_data(force_data_bottom, grid_para%y_nums, grid_para%x_nums)
+        retval = allocate_force_data(force_data_top,    grid_para%y_nums, grid_para%x_nums)
+        retval = allocate_force_data(force_data_west,   grid_para%z_nums, grid_para%y_nums)
+        retval = allocate_force_data(force_data_east,   grid_para%z_nums, grid_para%y_nums)
+        retval = allocate_force_data(force_data_south,  grid_para%z_nums, grid_para%x_nums)
+        retval = allocate_force_data(force_data_north,  grid_para%z_nums, grid_para%x_nums)
 
         ! prognositic data
         allocate (prognostic_data_new%density(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
@@ -96,19 +96,20 @@ module data
         allocate (prognostic_data_old%q(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
         
         contains
-            function allocate_force_data(f_data, index_first, index_second, index_third) result(retval)
+            function allocate_force_data(f_data, index_first, index_second) result(retval)
                 type(force_data) :: f_data
                 integer :: index_first
                 integer :: index_second
                 integer :: index_third
                 integer :: retval                
 
-                allocate(f_data%pressure(index_first, index_second, index_third))
-                allocate(f_data%temprature(index_first, index_second, index_third))
-                allocate(f_data%u(index_first, index_second, index_third))
-                allocate(f_data%v(index_first, index_second, index_third))
-                allocate(f_data%w(index_first, index_second, index_third))
-                allocate(f_data%q(index_first, index_second, index_third))
+                allocate(f_data%density(index_first, index_second))
+                allocate(f_data%pressure(index_first, index_second))
+                allocate(f_data%theta(index_first, index_second))
+                allocate(f_data%u(index_first, index_second))
+                allocate(f_data%v(index_first, index_second))
+                allocate(f_data%w(index_first, index_second))
+                allocate(f_data%q(index_first, index_second))
                 
                 retval = 1
             end function allocate_force_data

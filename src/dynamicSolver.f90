@@ -21,10 +21,11 @@ module dynamicSolver
 contains
     subroutine IO_test()
         use IO
-        integer         :: i, t_nums
+        integer         :: i, j, t_nums
+        t_nums = time_para%run_hours * 3600 / time_para%t_interval
 
+        ! test creat output nc
         ! call create_nc()
-        ! t_nums = time_para%run_hours * 3600 / time_para%t_interval
         
         ! do i = 1, t_nums
         !     prognostic_data_new%density = i
@@ -38,11 +39,28 @@ contains
         ! end do
 
         ! call close_nc() 
+              
+        ! test get force field data at every timestamp        
+        call open_force_nc()
         
+        do i = 1, t_nums
+            call get_force_from_nc_at_time(i)
+            write(*,*) "force_data_bottom"
+            do j = 1, ubound(force_data_bottom%pressure, 1)
+                print *, force_data_bottom%pressure(j, :)
+            end do
+
+            write(*,*) "force_data_top"
+            do j = 1, ubound(force_data_top%pressure, 1)
+                print *, force_data_top%pressure(j, :)
+            end do
+        end do
+
+        call close_force_nc()
+        
+        ! test get initial field data from nc
         call get_initial_from_nc()
 
-
-        
     end subroutine IO_test
 
     subroutine run()

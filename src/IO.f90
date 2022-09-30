@@ -346,6 +346,206 @@ contains
         call check( nf90_inq_varid(ncid_force, P_east_NAME,   pres_e_varid) )
         call check( nf90_inq_varid(ncid_force, P_south_NAME,  pres_s_varid) )
         call check( nf90_inq_varid(ncid_force, P_north_NAME,  pres_n_varid) )
+
+        contains
+        subroutine check(status)
+            integer, intent (in) :: status
         
+            if(status /= nf90_noerr) then 
+                print *, trim(nf90_strerror(status))
+                stop "Stopped"
+            end if
+        end subroutine check 
     end subroutine open_force_nc
+
+    subroutine get_force_from_nc_at_time(t_rec)
+        integer, intent(in) :: t_rec
+        integer :: NLVLS, NLATS, NLONS
+        integer, parameter :: NDIMS = 3
+        integer :: start(NDIMS), count(NDIMS)
+        integer :: xx, yy, zz
+
+        ! bottom boundary
+        real :: density_b_in(grid_para%x_nums, grid_para%y_nums)
+        real ::       u_b_in(grid_para%x_nums, grid_para%y_nums)
+        real ::       v_b_in(grid_para%x_nums, grid_para%y_nums)
+        real ::       w_b_in(grid_para%x_nums, grid_para%y_nums)
+        real ::      th_b_in(grid_para%x_nums, grid_para%y_nums)
+        real ::    pres_b_in(grid_para%x_nums, grid_para%y_nums)
+        ! top boundary
+        real :: density_t_in(grid_para%x_nums, grid_para%y_nums)
+        real ::       u_t_in(grid_para%x_nums, grid_para%y_nums)
+        real ::       v_t_in(grid_para%x_nums, grid_para%y_nums)
+        real ::       w_t_in(grid_para%x_nums, grid_para%y_nums)
+        real ::      th_t_in(grid_para%x_nums, grid_para%y_nums)
+        real ::    pres_t_in(grid_para%x_nums, grid_para%y_nums)
+        ! west boundary
+        real :: density_w_in(grid_para%y_nums, grid_para%z_nums)
+        real ::       u_w_in(grid_para%y_nums, grid_para%z_nums)
+        real ::       v_w_in(grid_para%y_nums, grid_para%z_nums)
+        real ::       w_w_in(grid_para%y_nums, grid_para%z_nums)
+        real ::      th_w_in(grid_para%y_nums, grid_para%z_nums)
+        real ::    pres_w_in(grid_para%y_nums, grid_para%z_nums)
+        ! west boundary
+        real :: density_e_in(grid_para%y_nums, grid_para%z_nums)
+        real ::       u_e_in(grid_para%y_nums, grid_para%z_nums)
+        real ::       v_e_in(grid_para%y_nums, grid_para%z_nums)
+        real ::       w_e_in(grid_para%y_nums, grid_para%z_nums)
+        real ::      th_e_in(grid_para%y_nums, grid_para%z_nums)
+        real ::    pres_e_in(grid_para%y_nums, grid_para%z_nums)
+        ! south boundary
+        real :: density_s_in(grid_para%x_nums, grid_para%z_nums)
+        real ::       u_s_in(grid_para%x_nums, grid_para%z_nums)
+        real ::       v_s_in(grid_para%x_nums, grid_para%z_nums)
+        real ::       w_s_in(grid_para%x_nums, grid_para%z_nums)
+        real ::      th_s_in(grid_para%x_nums, grid_para%z_nums)
+        real ::    pres_s_in(grid_para%x_nums, grid_para%z_nums)
+        ! north boundary
+        real :: density_n_in(grid_para%x_nums, grid_para%z_nums)
+        real ::       u_n_in(grid_para%x_nums, grid_para%z_nums)
+        real ::       v_n_in(grid_para%x_nums, grid_para%z_nums)
+        real ::       w_n_in(grid_para%x_nums, grid_para%z_nums)
+        real ::      th_n_in(grid_para%x_nums, grid_para%z_nums)
+        real ::    pres_n_in(grid_para%x_nums, grid_para%z_nums)
+        
+        NLVLS = grid_para%z_nums
+        NLATS = grid_para%y_nums
+        NLONS = grid_para%x_nums
+        
+        ! read bottom and top
+        count = (/ NLONS, NLATS, 1/)
+        start = (/ 1, 1, t_rec /)
+
+        call check( nf90_get_var(ncid_force, density_b_varid, density_b_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       u_b_varid,       u_b_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       v_b_varid,       v_b_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       w_b_varid,       w_b_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,   theta_b_varid,      th_b_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,    pres_b_varid,    pres_b_in, start = start, count = count) )
+        
+        call check( nf90_get_var(ncid_force, density_t_varid, density_t_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       u_t_varid,       u_t_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       v_t_varid,       v_t_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       w_t_varid,       w_t_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,   theta_t_varid,      th_t_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,    pres_t_varid,    pres_t_in, start = start, count = count) )
+    
+        ! read west and east
+        count = (/ NLATS, NLVLS, 1/)
+        start = (/ 1, 1, t_rec /)
+
+        call check( nf90_get_var(ncid_force, density_b_varid, density_b_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       u_b_varid,       u_b_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       v_b_varid,       v_b_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       w_b_varid,       w_b_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,   theta_b_varid,      th_b_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,    pres_b_varid,    pres_b_in, start = start, count = count) )
+        
+        call check( nf90_get_var(ncid_force, density_t_varid, density_t_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       u_t_varid,       u_t_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       v_t_varid,       v_t_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       w_t_varid,       w_t_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,   theta_t_varid,      th_t_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,    pres_t_varid,    pres_t_in, start = start, count = count) )
+
+        ! read south and north
+        count = (/ NLONS, NLVLS, 1/)
+        start = (/ 1, 1, t_rec /)
+
+        call check( nf90_get_var(ncid_force, density_s_varid, density_s_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       u_s_varid,       u_s_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       v_s_varid,       v_s_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       w_s_varid,       w_s_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,   theta_s_varid,      th_s_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,    pres_s_varid,    pres_s_in, start = start, count = count) )
+        
+        call check( nf90_get_var(ncid_force, density_n_varid, density_n_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       u_n_varid,       u_n_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       v_n_varid,       v_n_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       w_n_varid,       w_n_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,   theta_n_varid,      th_n_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,    pres_n_varid,    pres_n_in, start = start, count = count) )
+
+        ! pass data to force type variable
+        do yy = 1, NLATS
+            do xx = 1, NLONS
+                force_data_bottom%density(yy,xx)  = density_b_in(xx,yy)
+                force_data_bottom%pressure(yy,xx) =    pres_b_in(xx,yy)
+                force_data_bottom%u(yy,xx)        =       u_b_in(xx,yy)
+                force_data_bottom%v(yy,xx)        =       v_b_in(xx,yy)
+                force_data_bottom%w(yy,xx)        =       w_b_in(xx,yy)
+                force_data_bottom%theta(yy,xx)    =      th_b_in(xx,yy)
+
+                force_data_top%density(yy,xx)  = density_t_in(xx,yy)
+                force_data_top%pressure(yy,xx) =    pres_t_in(xx,yy)
+                force_data_top%u(yy,xx)        =       u_t_in(xx,yy)
+                force_data_top%v(yy,xx)        =       v_t_in(xx,yy)
+                force_data_top%w(yy,xx)        =       w_t_in(xx,yy)
+                force_data_top%theta(yy,xx)    =      th_t_in(xx,yy)
+            end do
+        end do 
+
+        do yy = 1, NLVLS
+            do xx = 1, NLATS
+                force_data_west%density(yy,xx)  = density_w_in(xx,yy)
+                force_data_west%pressure(yy,xx) =    pres_w_in(xx,yy)
+                force_data_west%u(yy,xx)        =       u_w_in(xx,yy)
+                force_data_west%v(yy,xx)        =       v_w_in(xx,yy)
+                force_data_west%w(yy,xx)        =       w_w_in(xx,yy)
+                force_data_west%theta(yy,xx)    =      th_w_in(xx,yy)
+
+                force_data_east%density(yy,xx)  = density_e_in(xx,yy)
+                force_data_east%pressure(yy,xx) =    pres_e_in(xx,yy)
+                force_data_east%u(yy,xx)        =       u_e_in(xx,yy)
+                force_data_east%v(yy,xx)        =       v_e_in(xx,yy)
+                force_data_east%w(yy,xx)        =       w_e_in(xx,yy)
+                force_data_east%theta(yy,xx)    =      th_e_in(xx,yy)
+            end do
+        end do
+
+        do yy = 1, NLVLS
+            do xx = 1, NLONS
+                force_data_south%density(yy,xx)  = density_s_in(xx,yy)
+                force_data_south%pressure(yy,xx) =    pres_s_in(xx,yy)
+                force_data_south%u(yy,xx)        =       u_s_in(xx,yy)
+                force_data_south%v(yy,xx)        =       v_s_in(xx,yy)
+                force_data_south%w(yy,xx)        =       w_s_in(xx,yy)
+                force_data_south%theta(yy,xx)    =      th_s_in(xx,yy)
+
+                force_data_north%density(yy,xx)  = density_n_in(xx,yy)
+                force_data_north%pressure(yy,xx) =    pres_n_in(xx,yy)
+                force_data_north%u(yy,xx)        =       u_n_in(xx,yy)
+                force_data_north%v(yy,xx)        =       v_n_in(xx,yy)
+                force_data_north%w(yy,xx)        =       w_n_in(xx,yy)
+                force_data_north%theta(yy,xx)    =      th_n_in(xx,yy)
+            end do
+        end do
+        
+        write(*,*) "|> force data read succeed at time index: ", t_rec
+
+        contains
+        subroutine check(status)
+            integer, intent (in) :: status
+        
+            if(status /= nf90_noerr) then 
+                print *, trim(nf90_strerror(status))
+                stop "Stopped"
+            end if
+        end subroutine check
+    end subroutine get_force_from_nc_at_time
+
+    subroutine close_force_nc()    
+        call check( nf90_close(ncid_force) )  
+        
+        contains
+        subroutine check(status)
+            integer, intent (in) :: status
+        
+            if(status /= nf90_noerr) then 
+                print *, trim(nf90_strerror(status))
+                stop "Stopped"
+            end if
+        end subroutine check
+    end subroutine close_force_nc
+
 end module IO

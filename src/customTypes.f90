@@ -40,12 +40,13 @@ module customTypes
     end type initial_data
 
     type, public :: force_data
-        real, dimension(:, :, :), allocatable :: pressure ! dimension(t,east/west/south/north/up/bottom)
-        real, dimension(:, :, :), allocatable :: temprature ! dimension(t,east/west/south/north/up/bottom)
-        real, dimension(:, :, :), allocatable :: u ! dimension(t,east/west/south/north/up/bottom)
-        real, dimension(:, :, :), allocatable :: v ! dimension(t,east/west/south/north/up/bottom)
-        real, dimension(:, :, :), allocatable :: w ! dimension(t,east/west/south/north/up/bottom)
-        real, dimension(:, :, :), allocatable :: q ! dimension(t,east/west/south/north/up/bottom)
+        real, dimension(:, :), allocatable :: density ! dimension(t,east/west/south/north/up/bottom)
+        real, dimension(:, :), allocatable :: pressure ! dimension(t,east/west/south/north/up/bottom)
+        real, dimension(:, :), allocatable :: theta ! dimension(t,east/west/south/north/up/bottom)
+        real, dimension(:, :), allocatable :: u ! dimension(t,east/west/south/north/up/bottom)
+        real, dimension(:, :), allocatable :: v ! dimension(t,east/west/south/north/up/bottom)
+        real, dimension(:, :), allocatable :: w ! dimension(t,east/west/south/north/up/bottom)
+        real, dimension(:, :), allocatable :: q ! dimension(t,east/west/south/north/up/bottom)
         end type force_data
 
     type, public :: prognostic_data
