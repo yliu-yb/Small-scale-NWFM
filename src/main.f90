@@ -2,7 +2,7 @@
 ! hello
 program SsNWFM
     use data, only : read_time_grid_config, initial_data_set
-    use dynamicSolver, only : IO_test
+    use dynamicSolver, only : IO_test, run
     implicit none
 
     write(*,*) '|> read time and grid config form ../data/time_grid.config'
@@ -11,7 +11,8 @@ program SsNWFM
     ! allocate memory and initial data value to 0
     call initial_data_set()
 
-    call IO_test()
+    call run()
+    ! call IO_test()
 
     ! write(*,*) '|> read initial field form ../data/initial_test.nc'
     ! call read_initial_data()

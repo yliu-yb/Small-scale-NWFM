@@ -65,20 +65,31 @@ module data
         allocate (ini_data%w(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
         allocate (ini_data%q(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
         allocate (ini_data%pressure(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
+        
+        ini_data%density = 0
+        ini_data%theta = 0
+        ini_data%u = 0
+        ini_data%v = 0
+        ini_data%w = 0
+        ini_data%q = 0
+        ini_data%pressure = 0
 
         ! auxiliary data
-        allocate (aux_data%pressure(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
+        allocate (aux_data%pressure(grid_para%z_nums + 2, grid_para%y_nums + 2, grid_para%x_nums + 2))
         allocate (aux_data%height(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
+        
+        aux_data%pressure = 0
+        aux_data%height = 0
 
         ! force data
         t_nums = time_para%run_hours * 3600 / time_para%t_interval
         
         retval = allocate_force_data(force_data_bottom, grid_para%y_nums, grid_para%x_nums)
-        retval = allocate_force_data(force_data_top,    grid_para%y_nums, grid_para%x_nums)
-        retval = allocate_force_data(force_data_west,   grid_para%z_nums, grid_para%y_nums)
-        retval = allocate_force_data(force_data_east,   grid_para%z_nums, grid_para%y_nums)
-        retval = allocate_force_data(force_data_south,  grid_para%z_nums, grid_para%x_nums)
-        retval = allocate_force_data(force_data_north,  grid_para%z_nums, grid_para%x_nums)
+        retval = allocate_force_data(force_data_top   ,    grid_para%y_nums, grid_para%x_nums)
+        retval = allocate_force_data(force_data_west  ,   grid_para%z_nums, grid_para%y_nums)
+        retval = allocate_force_data(force_data_east  ,   grid_para%z_nums, grid_para%y_nums)
+        retval = allocate_force_data(force_data_south ,  grid_para%z_nums, grid_para%x_nums)
+        retval = allocate_force_data(force_data_north ,  grid_para%z_nums, grid_para%x_nums)
 
         ! prognositic data
         allocate (prognostic_data_new%density(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
@@ -88,13 +99,26 @@ module data
         allocate (prognostic_data_new%w(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
         allocate (prognostic_data_new%q(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
 
-        allocate (prognostic_data_old%density(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
-        allocate (prognostic_data_old%theta(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
-        allocate (prognostic_data_old%u(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
-        allocate (prognostic_data_old%v(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
-        allocate (prognostic_data_old%w(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
-        allocate (prognostic_data_old%q(grid_para%z_nums, grid_para%y_nums, grid_para%x_nums))
+        allocate (prognostic_data_old%density(grid_para%z_nums + 2, grid_para%y_nums + 2, grid_para%x_nums + 2))
+        allocate (prognostic_data_old%theta(grid_para%z_nums + 2, grid_para%y_nums + 2, grid_para%x_nums + 2))
+        allocate (prognostic_data_old%u(grid_para%z_nums + 2, grid_para%y_nums + 2, grid_para%x_nums + 2))
+        allocate (prognostic_data_old%v(grid_para%z_nums + 2, grid_para%y_nums + 2, grid_para%x_nums + 2))
+        allocate (prognostic_data_old%w(grid_para%z_nums + 2, grid_para%y_nums + 2, grid_para%x_nums + 2))
+        allocate (prognostic_data_old%q(grid_para%z_nums + 2, grid_para%y_nums + 2, grid_para%x_nums + 2))
         
+        prognostic_data_new%density = 0
+        prognostic_data_new%theta = 0
+        prognostic_data_new%u = 0
+        prognostic_data_new%v = 0
+        prognostic_data_new%w = 0
+        prognostic_data_new%q = 0
+        prognostic_data_old%density = 0
+        prognostic_data_old%theta = 0
+        prognostic_data_old%u = 0
+        prognostic_data_old%v = 0
+        prognostic_data_old%w = 0
+        prognostic_data_old%q = 0
+
         contains
             function allocate_force_data(f_data, index_first, index_second) result(retval)
                 type(force_data) :: f_data
@@ -112,6 +136,15 @@ module data
                 allocate(f_data%q(index_first, index_second))
                 
                 retval = 1
+                
+                f_data%density = 0
+                f_data%pressure = 0
+                f_data%theta = 0
+                f_data%u = 0
+                f_data%v = 0
+                f_data%w = 0
+                f_data%q = 0
+
             end function allocate_force_data
 
     end subroutine initial_data_set

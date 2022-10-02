@@ -139,7 +139,7 @@ contains
         call check( nf90_put_att(ncid_out, t_varid, UNITS, TIME_UNITS) )
 
         ! The dimids array is used to pass the dimids of the dimensions of the netCDF variables.
-        dimids = (/ t_dimid, lvl_dimid, lat_dimid, lon_dimid /)
+        dimids = (/lon_dimid, lat_dimid, lvl_dimid, t_dimid /)
 
         ! Define the netCDF variables for the prognositc and auxiliary data.
         call check( nf90_def_var(ncid_out, DENSITY_NAME, NF90_REAL, dimids, density_varid) )
@@ -166,7 +166,7 @@ contains
         call check( nf90_put_var(ncid_out, t_varid, secondsSinceEpoch_list) )
         call check( nf90_put_var(ncid_out, lat_varid, lats) )
         call check( nf90_put_var(ncid_out, lon_varid, lons) )
-        count = (/ 1, NLVLS, NLATS, NLONS/)
+        count = (/ NLONS, NLATS, NLVLS, 1/)
         
         contains
             subroutine check(status)
@@ -181,15 +181,39 @@ contains
 
     subroutine write_data2nc(t_rec)
         integer, intent (in) :: t_rec
-        start = (/ t_rec, 1, 1, 1 /)
-        write(*,*) t_rec
-        call check( nf90_put_var(ncid_out, theta_varid, prognostic_data_new%density, start = start, count = count) )              
-        call check( nf90_put_var(ncid_out, theta_varid, prognostic_data_new%u, start = start, count = count) )              
-        call check( nf90_put_var(ncid_out, theta_varid, prognostic_data_new%v, start = start, count = count) )              
-        call check( nf90_put_var(ncid_out, theta_varid, prognostic_data_new%w, start = start, count = count) )              
-        call check( nf90_put_var(ncid_out, theta_varid, prognostic_data_new%theta, start = start, count = count) )              
-        call check( nf90_put_var(ncid_out, pres_varid, aux_data%pressure, start = start, count = count) )
-        call check( nf90_put_var(ncid_out, pres_varid, aux_data%height, start = start, count = count) )
+        integer :: NLVLS, NLATS, NLONS, xx, yy, zz
+        real :: density_out(grid_para%x_nums, grid_para%y_nums, grid_para%z_nums)
+        real :: u_out(grid_para%x_nums, grid_para%y_nums, grid_para%z_nums)
+        real :: v_out(grid_para%x_nums, grid_para%y_nums, grid_para%z_nums)
+        real :: w_out(grid_para%x_nums, grid_para%y_nums, grid_para%z_nums)
+        real :: th_out(grid_para%x_nums, grid_para%y_nums, grid_para%z_nums)
+        real :: pres_out(grid_para%x_nums, grid_para%y_nums, grid_para%z_nums)
+
+        NLVLS = grid_para%z_nums
+        NLATS = grid_para%y_nums
+        NLONS = grid_para%x_nums
+        
+        do zz = 1, NLVLS
+            do yy = 1, NLATS
+                do xx = 1, NLONS
+                    density_out(xx, yy, zz) = prognostic_data_new%density(zz,yy,xx)
+                    u_out(xx, yy, zz) = prognostic_data_new%u(zz,yy,xx)
+                    v_out(xx, yy, zz) = prognostic_data_new%v(zz,yy,xx)
+                    w_out(xx, yy, zz) = prognostic_data_new%w(zz,yy,xx)
+                    th_out(xx, yy, zz) = prognostic_data_new%theta(zz,yy,xx)
+                end do
+            end do
+        end do
+
+        start = (/ 1, 1, 1, t_rec /)
+        write(*,*) "save t_rec_ ",t_rec, "data to nc succeed"
+        call check( nf90_put_var(ncid_out, density_varid, density_out, start = start, count = count) )              
+        call check( nf90_put_var(ncid_out, u_varid, u_out, start = start, count = count) )              
+        call check( nf90_put_var(ncid_out, v_varid, v_out, start = start, count = count) )              
+        call check( nf90_put_var(ncid_out, w_varid, w_out, start = start, count = count) )              
+        call check( nf90_put_var(ncid_out, theta_varid, th_out, start = start, count = count) )              
+        ! call check( nf90_put_var(ncid_out, pres_varid, aux_data%pressure, start = start, count = count) )
+        ! call check( nf90_put_var(ncid_out, height_varid, aux_data%height, start = start, count = count) )
         
         contains
             subroutine check(status)
@@ -434,19 +458,19 @@ contains
         count = (/ NLATS, NLVLS, 1/)
         start = (/ 1, 1, t_rec /)
 
-        call check( nf90_get_var(ncid_force, density_b_varid, density_b_in, start = start, count = count) )
-        call check( nf90_get_var(ncid_force,       u_b_varid,       u_b_in, start = start, count = count) )
-        call check( nf90_get_var(ncid_force,       v_b_varid,       v_b_in, start = start, count = count) )
-        call check( nf90_get_var(ncid_force,       w_b_varid,       w_b_in, start = start, count = count) )
-        call check( nf90_get_var(ncid_force,   theta_b_varid,      th_b_in, start = start, count = count) )
-        call check( nf90_get_var(ncid_force,    pres_b_varid,    pres_b_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force, density_e_varid, density_e_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       u_e_varid,       u_e_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       v_e_varid,       v_e_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       w_e_varid,       w_e_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,   theta_e_varid,      th_e_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,    pres_e_varid,    pres_e_in, start = start, count = count) )
         
-        call check( nf90_get_var(ncid_force, density_t_varid, density_t_in, start = start, count = count) )
-        call check( nf90_get_var(ncid_force,       u_t_varid,       u_t_in, start = start, count = count) )
-        call check( nf90_get_var(ncid_force,       v_t_varid,       v_t_in, start = start, count = count) )
-        call check( nf90_get_var(ncid_force,       w_t_varid,       w_t_in, start = start, count = count) )
-        call check( nf90_get_var(ncid_force,   theta_t_varid,      th_t_in, start = start, count = count) )
-        call check( nf90_get_var(ncid_force,    pres_t_varid,    pres_t_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force, density_w_varid, density_w_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       u_w_varid,       u_w_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       v_w_varid,       v_w_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,       w_w_varid,       w_w_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,   theta_w_varid,      th_w_in, start = start, count = count) )
+        call check( nf90_get_var(ncid_force,    pres_w_varid,    pres_w_in, start = start, count = count) )
 
         ! read south and north
         count = (/ NLONS, NLVLS, 1/)
@@ -520,7 +544,6 @@ contains
                 force_data_north%theta(yy,xx)    =      th_n_in(xx,yy)
             end do
         end do
-        
         write(*,*) "|> force data read succeed at time index: ", t_rec
 
         contains
